@@ -1,25 +1,20 @@
 import os
 
 import openai
-from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify
 from openai.error import ServiceUnavailableError, InvalidRequestError, RateLimitError
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
-
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai.api_key = os.environ.get('OPENAI_API_KEY')
 messages = [
     {"role": "system", "content": "Ты дружелюбный, но саркастичный бот."}
 ]
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 
 
 @app.route('/')
 def index():
-    return render_template('.index.html')
+    return render_template('index.html')
 
 
 @app.route('/api/speech-to-text', methods=['POST'])

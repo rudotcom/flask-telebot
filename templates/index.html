@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Спроси chat-GPT</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+#loader {
+  animation-name: brain-rotate;
+  animation-duration: 2s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes brain-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
+</head>
+  <body>
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <h3 class="text-center mb-4">Спроси у chat-GPT</h3>
+          <div class="input-group mb-3">
+            <input id="transcript" type="text" class="form-control" placeholder="Нажмите и говорите..." aria-label="Enter text" aria-describedby="basic-addon2" readonly>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary btn-block" type="button" id="microphone-button"></button>
+            </div>
+          </div>
+          <div class="form-group">
+            <textarea id="respond" class="form-control" rows="15" readonly></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const recognition = new window.webkitSpeechRecognition();
+      recognition.lang = 'ru-RU';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      const transcriptElement = document.getElementById('transcript');
+      const respondElement = document.getElementById('respond');
+      const startButton = document.getElementById('microphone-button');
+      const loader = document.getElementById('loader');
+      const mic = document.getElementById('mic');
+
+      let transcript = '';
+      micButton(true);
+
+      startButton.addEventListener('mousedown', () => {
+        recognition.start();
+        transcript = '';
+      });
+
+      startButton.addEventListener('mouseup', () => {
+        micButton(false);
+        recognition.stop();
+	    fetch('/api/speech-to-text', {
+          method: 'POST',
+          body: JSON.stringify({ transcript }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => speak(data.response))
+        .catch(error => respondElement.value = error);
+      });
+
+      recognition.onresult = (event) => {
+        // transcript = '';
+        // const result = event.results[event.results.length - 1];
+        transcript = event.results[0][0].transcript;
+        transcriptElement.value = transcript;
+      };
+      function speak(text) {
+        micButton(true);
+        respondElement.value = text;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.5;
+        speechSynthesis.speak(utterance);
+      }
+      function micButton(status) {
+        if (status === true) {
+          startButton.innerHTML = '<i id=\"mic\" class=\"fa fa-microphone\"></i>';
+          startButton.disabled = false;
+        } else {
+          startButton.innerHTML = '<svg id=\"loader\" stroke=\"currentColor\" fill=\"currentColor\" stroke-width=\"0\" viewBox=\"0 0 512 512\" class=\"animate-spin\" height=\"1em\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z\"></path></svg> Мыслю...';
+          startButton.disabled = true;
+        }
+
+      }
+    </script>
+  </body>
+</html>
