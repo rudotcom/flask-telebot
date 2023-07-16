@@ -30,7 +30,7 @@ def speech_to_text():
             presence_penalty=0.0,
         )
     except ServiceUnavailableError:
-        return jsonify({'response': 'Извините, сервер openAI перегружен и не отвечает'})
+        return jsonify({'response': 'Извините, сервер openAI перегружен и не отвечает.'})
     except InvalidRequestError as e:
         return jsonify({'response': f'Проблема с запросом, {e}'})
     except RateLimitError:
