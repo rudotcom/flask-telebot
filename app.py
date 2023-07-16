@@ -40,7 +40,6 @@ def speech_to_text():
 
     print('GPT:', response.choices[0].message.content)
     return jsonify({'response': response.choices[0].message.content})
-    # return jsonify({'response': datetime.now()})
 
 
 if __name__ == '__main__':
