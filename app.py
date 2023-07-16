@@ -5,10 +5,6 @@ from flask import Flask, render_template, request, jsonify
 from openai.error import ServiceUnavailableError, InvalidRequestError, RateLimitError
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
-messages = [
-    {"role": "system", "content": "Ты дружелюбный, но саркастичный бот."}
-]
-
 app = Flask(__name__, template_folder='templates')
 
 
@@ -20,7 +16,8 @@ def index():
 @app.route('/api/speech-to-text', methods=['POST'])
 def speech_to_text():
     transcript = request.json['transcript']
-    messages.append({"role": "user", "content": transcript})
+    messages = [{"role": "system", "content": "Ты дружелюбный, но саркастичный бот."},
+                {"role": "user", "content": transcript}]
     print('Вопрос:', transcript)
     try:
         response = openai.ChatCompletion.create(
