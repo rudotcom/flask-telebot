@@ -34,7 +34,7 @@ def speech_to_text():
     except InvalidRequestError as e:
         return jsonify({'response': f'Проблема с запросом, {e}'})
     except RateLimitError:
-        return jsonify({'response': 'Превышен лимит запросов в минуту'})
+        return jsonify({'response': 'Превышен лимит запросов в минуту.'})
     except BaseException as e:
         return jsonify({'response': f'Неизвестная ошибка: {e}'})
 
