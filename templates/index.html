@@ -35,9 +35,8 @@
         <div class="col-md-8 offset-md-2">
           <h3 class="text-center mb-4">Спроси у chat-GPT</h3>
           <div class="input-group mb-3">
-            <form action="/api/speech-to-text" method="post"></form>
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary btn-block" type="button" id="microphone-button"></button>
+              <button class="btn btn-outline-secondary btn-block" type="button" id="microphone-button"><i id="mic" class="fa fa-microphone"></i></button>
             </div>
             <input id="transcript" type="text" class="form-control" placeholder="Нажмите и говорите..." aria-label="Enter text" aria-describedby="basic-addon2">
             <div class="input-group-append">
@@ -72,7 +71,7 @@
       const mic = document.getElementById('mic');
 
       let transcript = '';
-      micButton(true);
+      sendButton(true);
 
       startButton.addEventListener('mousedown', () => {
         recognition.start();
@@ -85,7 +84,7 @@
 
       sendButton.addEventListener('click', () => {
         respondElement.value = 'Ожидаю ответа...';
-        micButton(false);
+        sendButtonStatus(false);
         let transcript = transcriptElement.value;
 	    fetch('/api/speech-to-text', {
           method: 'POST',
@@ -107,19 +106,19 @@
         transcriptElement.value = transcript;
       };
       function speak(text) {
-        micButton(true);
+        sendButtonStatus(true);
         respondElement.value = text;
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 1.5;
         speechSynthesis.speak(utterance);
       }
-      function micButton(status) {
+      function sendButtonStatus(status) {
         if (status === true) {
-          startButton.innerHTML = '<i id=\"mic\" class=\"fa fa-microphone\"></i>';
-          startButton.disabled = false;
+          sendButton.innerHTML = 'Отправить';
+          sendButton.disabled = false;
         } else {
-          startButton.innerHTML = '<svg id=\"loader\" stroke=\"currentColor\" fill=\"currentColor\" stroke-width=\"0\" viewBox=\"0 0 512 512\" class=\"animate-spin\" height=\"1em\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z\"></path></svg> Мыслю...';
-          startButton.disabled = true;
+          sendButton.innerHTML = '<svg id=\"loader\" stroke=\"currentColor\" fill=\"currentColor\" stroke-width=\"0\" viewBox=\"0 0 512 512\" class=\"animate-spin\" height=\"1em\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z\"></path></svg> Мыслю...';
+          sendButton.disabled = true;
         }
 
       }
