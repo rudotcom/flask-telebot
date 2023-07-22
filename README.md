@@ -1,4 +1,4 @@
-# flask-telebot
+# flask-bot
 
 ## build image
 docker build -t coda/flask-bot .
