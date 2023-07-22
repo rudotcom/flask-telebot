@@ -1,3 +1,5 @@
+ARG VERSION=0.1
+
 FROM python:3.10-alpine
 COPY requirements.txt /
 RUN pip3 install --no-cache-dir -r /requirements.txt
