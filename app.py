@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from openai.error import ServiceUnavailableError, InvalidRequestError, RateLimitError
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
 
 @app.route('/')
